@@ -35,3 +35,16 @@ services:
       MYSQL_USER: laravel_user
     ports:
       - "3306:3306"
+
+  # 4. Redis Service
+  redis:
+    image: redis:7-alpine
+    container_name: laravel-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  volumes:
+    mysql_data:
+    redis_data:
