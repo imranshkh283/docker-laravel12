@@ -1,8 +1,9 @@
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import api from "../api";
 
 function Login() {
+    const navigate = useNavigate();
     const [form, setForm] = useState({
         email: "",
         password: "",
@@ -33,6 +34,8 @@ function Login() {
                 );
 
                 setSuccess(response.data.message);
+
+                setTimeout(() => navigate("/dashboard"), 800);
 
                 setForm({ email: "", password: "" });
             }
