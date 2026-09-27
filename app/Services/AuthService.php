@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use App\DTOs\LoginDTO;
+use App\DTOs\RegisterDTO;
+use App\Exceptions\InvalidCredentialsException;
+use App\Exceptions\TooManyAttemptsException;
+use App\Exceptions\UserAlreadyExistsException;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
@@ -22,34 +25,34 @@ class AuthService
     /**
      * Register a new user and return user + token.
      */
-    public function register(array $data): array
+    public function register(RegisterDTO $dto): array
     {
-        $user = $this->users->create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
-
-        $token = $this->issueToken($user);
-
-        return ['user' => $user, 'token' => $token];
-    }
-
-    public function login(string $email, string $password, string $ip): array
-    {
-        $this->ensureIsNotRateLimited($email, $ip);
-
-        $user = $this->users->findByEmail($email);
-
-        if (! $user || ! Hash::check($password, $user->password)) {
-            RateLimiter::hit($this->throttleKey($email, $ip), self::DECAY_SECONDS);
-
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+        if ($this->users->findByEmail($dto->email)) {
+            throw new UserAlreadyExistsException();
         }
 
-        RateLimiter::clear($this->throttleKey($email, $ip));
+        $user = $this->users->create([
+            'name'     => $dto->name,
+            'email'    => $dto->email,
+            'password' => Hash::make($dto->password),
+        ]);
+
+        return ['user' => $user, 'token' => $this->issueToken($user)];
+    }
+
+    public function login(LoginDTO $dto): array
+    {
+        $this->ensureIsNotRateLimited($dto->email, $dto->ip);
+
+        $user = $this->users->findByEmail($dto->email);
+
+        if (! $user || ! Hash::check($dto->password, $user->password)) {
+            RateLimiter::hit($this->throttleKey($dto->email, $dto->ip), self::DECAY_SECONDS);
+
+            throw new InvalidCredentialsException();
+        }
+
+        RateLimiter::clear($this->throttleKey($dto->email, $dto->ip));
 
         $user->tokens()->where('name', 'web')->delete();
 
@@ -80,9 +83,7 @@ class AuthService
 
         $seconds = RateLimiter::availableIn($this->throttleKey($email, $ip));
 
-        throw ValidationException::withMessages([
-            'email' => ["Too many login attempts. Try again in {$seconds} seconds."],
-        ]);
+        throw new TooManyAttemptsException($seconds);
     }
 
     protected function throttleKey(string $email, string $ip): string

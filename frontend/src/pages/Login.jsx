@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
+import { normalizeError, isRateLimited } from "../lib/errors";
 
 function Login() {
     const navigate = useNavigate();
@@ -40,11 +41,22 @@ function Login() {
                 setForm({ email: "", password: "" });
             }
         } catch (error) {
-            // Laravel validation errors: { email: ["..."], password: ["..."] }
-            if (error.response && error.response.data) {
-                setErrors(error.response.data);
-            } else {
-                setErrors({ message: "Something went wrong. Try again." });
+            const normalized = normalizeError(error);
+            setErrors(normalized.errors);
+
+            if (isRateLimited(normalized)) {
+                // timer dikhao
+                setErrors({ email: [normalized.message] });
+            }
+
+            // Special handling for rate limit
+            if (normalized.code === "TOO_MANY_ATTEMPTS") {
+                setErrors({ email: [normalized.message] });
+            }
+
+            // If no field errors, show general message
+            if (Object.keys(normalized.errors).length === 0) {
+                setErrors({ message: normalized.message });
             }
         } finally {
             setLoading(false);

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\LoginDTO;
+use App\DTOs\RegisterDTO;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Services\AuthService;
+use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,49 +20,48 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse
     {
-        $result = $this->authService->register($request->validated());
+        $result = $this->authService->register(
+            RegisterDTO::fromArray($request->validated())
+        );
 
-        return response()->json([
-            'success'    => true,
-            'message'    => 'User registered successfully',
-            'data'       => new UserResource($result['user']),
-            'token'      => $result['token'],
-            'token_type' => 'Bearer',
-        ], 201);
+        return ApiResponse::success(
+            data: new UserResource($result['user']),
+            message: 'User registered successfully',
+            status: 201,
+            extra: [
+                'token'      => $result['token'],
+                'token_type' => 'Bearer',
+            ],
+        );
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->authService->login(
-            $request->email,
-            $request->password,
-            $request->ip()
+            LoginDTO::fromRequest($request)
         );
 
-        return response()->json([
-            'success'    => true,
-            'message'    => 'Login successful',
-            'data'       => new UserResource($result['user']),
-            'token'      => $result['token'],
-            'token_type' => 'Bearer',
-        ]);
+        return ApiResponse::success(
+            data: new UserResource($result['user']),
+            message: 'Login successful',
+            extra: [
+                'token'      => $result['token'],
+                'token_type' => 'Bearer',
+            ],
+        );
     }
 
     public function logout(Request $request): JsonResponse
     {
         $this->authService->logout($request->user());
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Logged out successfully',
-        ]);
+        return ApiResponse::success(message: 'Logged out successfully');
     }
 
     public function user(Request $request): JsonResponse
     {
-        return response()->json([
-            'success' => true,
-            'data'    => new UserResource($request->user()),
-        ]);
+        return ApiResponse::success(
+            data: new UserResource($request->user())
+        );
     }
 }
