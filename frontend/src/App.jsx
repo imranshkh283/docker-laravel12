@@ -8,6 +8,9 @@ import Users from "./pages/Users";
 import About from "./pages/About";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import CategoryList from "./pages/categories/CategoryList";
+import CategoryForm from "./pages/categories/CategoryForm";
+
 function App() {
     return (
         <BrowserRouter>
@@ -23,6 +26,17 @@ function App() {
                         <Route index element={<Home />} />
                         <Route path="users" element={<Users />} />
                         <Route path="about" element={<About />} />
+
+                        {/* Categories */}
+                        <Route path="categories" element={<CategoryList />} />
+                        <Route
+                            path="categories/create"
+                            element={<CategoryForm />}
+                        />
+                        <Route
+                            path="categories/:id/edit"
+                            element={<CategoryForm />}
+                        />
                     </Route>
                 </Route>
 
