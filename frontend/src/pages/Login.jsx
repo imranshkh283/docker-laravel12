@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import { normalizeError, isRateLimited } from "../lib/errors";
+import { authStore } from "../lib/authStore";
 
 function Login() {
     const navigate = useNavigate();
@@ -26,8 +27,13 @@ function Login() {
 
         try {
             const response = await api.post("/login", form);
-            console.log(form);
             if (response.data.success) {
+                authStore.saveSession(response.data); // ← ek line me sab save
+                setSuccess(response.data.message);
+                setTimeout(() => navigate("/dashboard"), 800);
+            }
+
+            /* if (response.data.success) {
                 localStorage.setItem("token", response.data.token);
                 localStorage.setItem(
                     "user",
@@ -39,7 +45,7 @@ function Login() {
                 setTimeout(() => navigate("/dashboard"), 800);
 
                 setForm({ email: "", password: "" });
-            }
+            } */
         } catch (error) {
             const normalized = normalizeError(error);
             setErrors(normalized.errors);

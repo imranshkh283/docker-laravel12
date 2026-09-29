@@ -28,10 +28,7 @@ class AuthController extends Controller
             data: new UserResource($result['user']),
             message: 'User registered successfully',
             status: 201,
-            extra: [
-                'token'      => $result['token'],
-                'token_type' => 'Bearer',
-            ],
+            extra: $result['tokens'],   // ← yahan se aa raha
         );
     }
 
@@ -44,10 +41,17 @@ class AuthController extends Controller
         return ApiResponse::success(
             data: new UserResource($result['user']),
             message: 'Login successful',
-            extra: [
-                'token'      => $result['token'],
-                'token_type' => 'Bearer',
-            ],
+            extra: $result['tokens'],
+        );
+    }
+
+    public function refresh(Request $request): JsonResponse
+    {
+        $tokens = $this->authService->refresh($request->user());
+
+        return ApiResponse::success(
+            message: 'Token refreshed successfully',
+            extra: $tokens,
         );
     }
 

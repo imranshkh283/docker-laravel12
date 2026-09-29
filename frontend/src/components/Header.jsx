@@ -1,15 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { authStore } from "../lib/authStore";
 import api from "../api";
 
 function Header() {
     const navigate = useNavigate();
 
     // Read user from localStorage (set during login)
-    const [user] = useState(() => {
-        const stored = localStorage.getItem("user");
+    /* const [user] = useState(() => {
+        const stored = localStorage.getItem("data");
         return stored ? JSON.parse(stored) : null;
-    });
+    }); */
+    const [user] = useState(() => authStore.getUser());
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -37,9 +39,11 @@ function Header() {
             // Even if API fails, still clear local data
             console.error("Logout error:", err);
         } finally {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
+            authStore.clear();
             navigate("/login");
+            // localStorage.removeItem("token");
+            // localStorage.removeItem("user");
+            // navigate("/login");
         }
     };
 

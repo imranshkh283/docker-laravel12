@@ -19,7 +19,8 @@ class AuthService
     protected const DECAY_SECONDS = 60;
 
     public function __construct(
-        protected UserRepository $users
+        protected UserRepository $users,
+        protected TokenService $tokens,
     ) {}
 
     /**
@@ -37,7 +38,7 @@ class AuthService
             'password' => Hash::make($dto->password),
         ]);
 
-        return ['user' => $user, 'token' => $this->issueToken($user)];
+        return ['user' => $user, 'tokens' => $this->tokens->generateTokenPair($user)];
     }
 
     public function login(LoginDTO $dto): array
@@ -56,7 +57,7 @@ class AuthService
 
         $user->tokens()->where('name', 'web')->delete();
 
-        return ['user' => $user, 'token' => $this->issueToken($user)];
+        return ['user' => $user, 'tokens' => $this->tokens->generateTokenPair($user)];
     }
 
     /**
@@ -64,16 +65,16 @@ class AuthService
      */
     public function logout(User $user): void
     {
-        $user->currentAccessToken()->delete();
+        $this->tokens->revokeAllTokens($user);
     }
 
     /**
      * Issue a new Sanctum token.
      */
-    protected function issueToken(User $user): string
-    {
-        return $user->createToken('web')->plainTextToken;
-    }
+    // protected function issueToken(User $user): string
+    // {
+    //     return $user->createToken('web')->plainTextToken;
+    // }
 
     protected function ensureIsNotRateLimited(string $email, string $ip): void
     {
@@ -89,5 +90,10 @@ class AuthService
     protected function throttleKey(string $email, string $ip): string
     {
         return strtolower($email) . '|' . $ip;
+    }
+
+    public function refresh(User $user): array
+    {
+        return $this->tokens->refreshAccessToken($user);
     }
 }
