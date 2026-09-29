@@ -26,6 +26,10 @@ function Sidebar() {
                     <span>📁</span> Categories
                 </NavLink>
 
+                <NavLink to="/dashboard/products" className={linkClass}>
+                    <span>📦</span> Products
+                </NavLink>
+
                 <NavLink to="/dashboard/users" className={linkClass}>
                     <span>👥</span> Users
                 </NavLink>
