@@ -11,6 +11,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CategoryList from "./pages/categories/CategoryList";
 import CategoryForm from "./pages/categories/CategoryForm";
 
+import ProductList from "./pages/products/ProductList";
+import ProductForm from "./pages/products/ProductForm";
+
 function App() {
     return (
         <BrowserRouter>
@@ -36,6 +39,17 @@ function App() {
                         <Route
                             path="categories/:id/edit"
                             element={<CategoryForm />}
+                        />
+
+                        {/* Products */}
+                        <Route path="products" element={<ProductList />} />
+                        <Route
+                            path="products/create"
+                            element={<ProductForm />}
+                        />
+                        <Route
+                            path="products/:id/edit"
+                            element={<ProductForm />}
                         />
                     </Route>
                 </Route>

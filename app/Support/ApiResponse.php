@@ -51,6 +51,11 @@ class ApiResponse
         return response()->json($payload, $status);
     }
 
+    public static function notFound(string $message = 'Resource not found'): JsonResponse
+    {
+        return self::error($message, 404);
+    }
+
     /**
      * Validation error (422).
      */

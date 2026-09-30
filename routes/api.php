@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -30,6 +31,13 @@ Route::prefix('v1')->group(function () {
 
             // Bulk delete — MUST be before /{category} route to avoid conflict
             Route::delete('/categories/bulk',   [CategoryController::class, 'bulkDestroy']);
+
+            // Products
+            Route::get('/products',           [ProductController::class, 'index']);
+            Route::post('/products',          [ProductController::class, 'store']);
+            Route::get('/products/{product}', [ProductController::class, 'show']);
+            Route::put('/products/{product}', [ProductController::class, 'update']);
+            Route::delete('/products/{product}', [ProductController::class, 'destroy']);
         });
     });
 });
