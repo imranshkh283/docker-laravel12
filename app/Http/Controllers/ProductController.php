@@ -70,15 +70,15 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductRequest $request, Category $category): JsonResponse
+    public function update(ProductRequest $request, Product $product): JsonResponse
     {
-        $category->update($request->validated());
+        $product->update($request->validated());
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category updated successfully',
-            'data'    => $category,
-        ]);
+        return ApiResponse::success(
+            data: new ProductResource($product),
+            message: 'Product updated successfully',
+            status: 200,
+        );
     }
 
     /**

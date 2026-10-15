@@ -17,7 +17,9 @@ class TokenService
     public function generateTokenPair(User $user): array
     {
         // Delete old tokens
-        $user->tokens()->delete();
+        $user->tokens()
+            ->where('abilities', 'like', '%access-api%')
+            ->delete();
 
         $accessToken = $this->createAccessToken($user);
         $refreshToken = $this->createRefreshToken($user);

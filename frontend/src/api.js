@@ -79,7 +79,7 @@ api.interceptors.response.use(
 
             // Call /refresh with refresh token
             const { data } = await axios.post(
-                "http://127.0.0.1:8000/api/v1/refresh",
+                "http://localhost:8000/api/v1/refresh",
                 {},
                 {
                     headers: {

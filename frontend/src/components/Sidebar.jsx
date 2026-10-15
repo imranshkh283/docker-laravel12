@@ -30,6 +30,11 @@ function Sidebar() {
                     <span>📦</span> Products
                 </NavLink>
 
+                <NavLink to="/dashboard/pos" className={linkClass}>
+                    <span>🧾</span>
+                    <span>POS</span>
+                </NavLink>
+
                 <NavLink to="/dashboard/users" className={linkClass}>
                     <span>👥</span> Users
                 </NavLink>

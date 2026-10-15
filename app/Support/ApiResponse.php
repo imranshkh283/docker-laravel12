@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use Illuminate\Http\JsonResponse;
+use App\Support\ApiResponse;
 
 class ApiResponse
 {

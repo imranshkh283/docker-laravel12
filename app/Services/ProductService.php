@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\ProductDTO;
 use App\Models\Product;
+use Illuminate\Support\Facades\Cache;
 use App\Repositories\ProductRepository;
 
 class ProductService
@@ -17,7 +18,10 @@ class ProductService
      */
     public function getProductionById(int $id): ?Product
     {
-        return $this->products->findById($id);
+        return Cache::remember('product-' . $id, now()->addHours(6), function () use ($id) {
+            return $this->products->findById($id);
+        });
+        //   return $this->products->findById($id);
     }
 
     /**

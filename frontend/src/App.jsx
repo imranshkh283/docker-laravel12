@@ -14,6 +14,8 @@ import CategoryForm from "./pages/categories/CategoryForm";
 import ProductList from "./pages/products/ProductList";
 import ProductForm from "./pages/products/ProductForm";
 
+import PosScreen from "./pages/pos/PosScreen";
+
 function App() {
     return (
         <BrowserRouter>
@@ -51,6 +53,8 @@ function App() {
                             path="products/:id/edit"
                             element={<ProductForm />}
                         />
+
+                        <Route path="pos" element={<PosScreen />} />
                     </Route>
                 </Route>
 
