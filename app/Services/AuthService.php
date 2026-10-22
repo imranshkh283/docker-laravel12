@@ -7,6 +7,7 @@ use App\DTOs\RegisterDTO;
 use App\Exceptions\InvalidCredentialsException;
 use App\Exceptions\TooManyAttemptsException;
 use App\Exceptions\UserAlreadyExistsException;
+use App\Jobs\SendRegistrationNotificationJob;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
@@ -37,6 +38,10 @@ class AuthService
             'email'    => $dto->email,
             'password' => Hash::make($dto->password),
         ]);
+
+        foreach (['email', 'whatsapp', 'sms'] as $key => $channel) {
+            SendRegistrationNotificationJob::dispatch($user->id, $channel)->afterCommit();
+        }
 
         return ['user' => $user, 'tokens' => $this->tokens->generateTokenPair($user)];
     }
