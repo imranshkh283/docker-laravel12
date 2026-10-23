@@ -43,7 +43,7 @@ class AuthService
             SendRegistrationNotificationJob::dispatch($user->id, $channel)->afterCommit();
         }
 
-        return ['user' => $user, 'tokens' => $user->createToken('auth_token')->plainTextToken];
+        return ['user' => $user, 'token' => $user->createToken('auth_token')->plainTextToken];
     }
 
     public function login(LoginDTO $dto): array
@@ -62,7 +62,7 @@ class AuthService
 
         $user->tokens()->where('name', 'web')->delete();
 
-        return ['user' => $user, 'tokens' => $user->createToken('auth_token')->plainTextToken];
+        return ['user' => $user, 'token' => $user->createToken('auth_token')->plainTextToken];
     }
 
     /**

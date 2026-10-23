@@ -27,40 +27,29 @@ function Login() {
 
         try {
             const response = await api.post("/login", form);
-            if (response.data.success) {
-                authStore.saveSession(response.data); // ← ek line me sab save
-                setSuccess(response.data.message);
+
+            // Actual login response
+            const result = response.data;
+
+            if (result.success) {
+                authStore.saveSession(result);
+
+                setSuccess(result.message);
+
                 setTimeout(() => navigate("/dashboard"), 800);
             }
-
-            /* if (response.data.success) {
-                localStorage.setItem("token", response.data.token);
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(response.data.user),
-                );
-
-                setSuccess(response.data.message);
-
-                setTimeout(() => navigate("/dashboard"), 800);
-
-                setForm({ email: "", password: "" });
-            } */
         } catch (error) {
             const normalized = normalizeError(error);
             setErrors(normalized.errors);
 
             if (isRateLimited(normalized)) {
-                // timer dikhao
                 setErrors({ email: [normalized.message] });
             }
 
-            // Special handling for rate limit
             if (normalized.code === "TOO_MANY_ATTEMPTS") {
                 setErrors({ email: [normalized.message] });
             }
 
-            // If no field errors, show general message
             if (Object.keys(normalized.errors).length === 0) {
                 setErrors({ message: normalized.message });
             }

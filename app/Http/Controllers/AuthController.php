@@ -39,7 +39,7 @@ class AuthController extends Controller
         );
 
         $extra = [
-            'token' => $result['tokens'],
+            'token' => $result['token'],
             'token_type' => 'Bearer',
         ];
         return ApiResponse::success(
