@@ -28,7 +28,7 @@ class AuthController extends Controller
             data: new UserResource($result['user']),
             message: 'User registered successfully',
             status: 201,
-            extra: $result['tokens'],   // ← yahan se aa raha
+            extra: $result['tokens'],
         );
     }
 
@@ -38,10 +38,14 @@ class AuthController extends Controller
             LoginDTO::fromRequest($request)
         );
 
+        $extra = [
+            'token' => $result['tokens'],
+            'token_type' => 'Bearer',
+        ];
         return ApiResponse::success(
             data: new UserResource($result['user']),
             message: 'Login successful',
-            extra: $result['tokens'],
+            extra: $extra,
         );
     }
 

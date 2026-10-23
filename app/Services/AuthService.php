@@ -43,12 +43,12 @@ class AuthService
             SendRegistrationNotificationJob::dispatch($user->id, $channel)->afterCommit();
         }
 
-        return ['user' => $user, 'tokens' => $this->tokens->generateTokenPair($user)];
+        return ['user' => $user, 'tokens' => $user->createToken('auth_token')->plainTextToken];
     }
 
     public function login(LoginDTO $dto): array
     {
-        $this->ensureIsNotRateLimited($dto->email, $dto->ip);
+        // $this->ensureIsNotRateLimited($dto->email, $dto->ip);
 
         $user = $this->users->findByEmail($dto->email);
 
@@ -62,7 +62,7 @@ class AuthService
 
         $user->tokens()->where('name', 'web')->delete();
 
-        return ['user' => $user, 'tokens' => $this->tokens->generateTokenPair($user)];
+        return ['user' => $user, 'tokens' => $user->createToken('auth_token')->plainTextToken];
     }
 
     /**
