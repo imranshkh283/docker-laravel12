@@ -1,0 +1,292 @@
+/* ===== Main Container ===== */
+.taskmanage-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 30px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.07);
+    color: #1e293b;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+.taskmanage-container * {
+    box-sizing: border-box;
+}
+
+.taskmanage-container .title {
+    margin: 0 0 26px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
+    font-size: 28px;
+    font-weight: 750;
+    letter-spacing: -0.7px;
+}
+
+/* ===== Success and Error Messages ===== */
+.taskmanage-container .message {
+    margin-bottom: 20px;
+    padding: 13px 16px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.taskmanage-container .message.success {
+    color: #166534;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.taskmanage-container .message.error {
+    color: #b91c1c;
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+
+/* ===== Filters ===== */
+.taskmanage-container .filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.taskmanage-container label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.taskmanage-container select,
+.taskmanage-container input {
+    width: 100%;
+    min-width: 130px;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    background-color: #ffffff;
+    color: #1e293b;
+    font: inherit;
+    font-size: 14px;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.taskmanage-container select {
+    cursor: pointer;
+}
+
+.taskmanage-container input::placeholder {
+    color: #94a3b8;
+}
+
+.taskmanage-container select:focus,
+.taskmanage-container input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.13);
+}
+
+/* ===== Table ===== */
+.taskmanage-container .table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 32px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+
+.taskmanage-container table {
+    width: 100%;
+    min-width: 700px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.taskmanage-container thead {
+    background: #f8fafc;
+}
+
+.taskmanage-container th {
+    padding: 16px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    white-space: nowrap;
+}
+
+.taskmanage-container td {
+    padding: 16px;
+    border-top: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.taskmanage-container tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.taskmanage-container tbody tr:hover {
+    background: #f8fafc;
+}
+
+.taskmanage-container tbody td[colspan] {
+    padding: 40px 16px;
+    color: #94a3b8;
+    text-align: center;
+    font-size: 15px;
+}
+
+/* ===== Action Buttons ===== */
+.taskmanage-container .edit-btn,
+.taskmanage-container .delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-right: 7px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 17px;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.taskmanage-container .edit-btn {
+    color: #4f46e5;
+    background: #eef2ff;
+}
+
+.taskmanage-container .edit-btn:hover {
+    background: #e0e7ff;
+    transform: translateY(-1px);
+}
+
+.taskmanage-container .delete-btn {
+    color: #dc2626;
+    background: #fef2f2;
+}
+
+.taskmanage-container .delete-btn:hover {
+    background: #fee2e2;
+    transform: translateY(-1px);
+}
+
+.taskmanage-container button:focus-visible {
+    outline: 3px solid rgba(99, 102, 241, 0.35);
+    outline-offset: 2px;
+}
+
+/* ===== New Task Form ===== */
+.taskmanage-container .new-task-form {
+    display: grid;
+    grid-template-columns: minmax(180px, 2fr) repeat(3, minmax(120px, 1fr)) auto;
+    align-items: end;
+    gap: 16px;
+    padding: 22px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.taskmanage-container .new-task-form input {
+    min-width: 0;
+}
+
+.taskmanage-container .new-task-form button[type="submit"] {
+    min-height: 42px;
+    padding: 0 20px;
+    border: 1px solid #4f46e5;
+    border-radius: 8px;
+    background: #4f46e5;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 650;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.taskmanage-container
+    .new-task-form
+    button[type="submit"]:hover:not(:disabled) {
+    background: #4338ca;
+    transform: translateY(-1px);
+}
+
+.taskmanage-container .new-task-form button[type="submit"]:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* ===== Responsive Layout ===== */
+@media (max-width: 1000px) {
+    .taskmanage-container .new-task-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .taskmanage-container .new-task-form button[type="submit"] {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .taskmanage-container {
+        margin: 12px auto;
+        padding: 18px 14px;
+        border-radius: 10px;
+    }
+
+    .taskmanage-container .title {
+        margin-bottom: 20px;
+        font-size: 23px;
+    }
+
+    .taskmanage-container .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .taskmanage-container .filters label,
+    .taskmanage-container .filters select {
+        width: 100%;
+    }
+
+    .taskmanage-container .new-task-form {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 16px;
+    }
+
+    .taskmanage-container .table-container {
+        margin-bottom: 24px;
+    }
+
+    .taskmanage-container th,
+    .taskmanage-container td {
+        padding: 12px;
+    }
+}

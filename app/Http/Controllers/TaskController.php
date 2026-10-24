@@ -11,7 +11,7 @@ class TaskController extends Controller
     public function index()
     {
 
-        $task = Task::latest()->first();
+        $task = Task::latest()->get();
 
         if (!$task) {
             return response()->json([
@@ -19,6 +19,7 @@ class TaskController extends Controller
             ]);
         } else {
             return response()->json([
+                'success' => true,
                 'message' => 'Task found',
                 'data' => $task
             ]);

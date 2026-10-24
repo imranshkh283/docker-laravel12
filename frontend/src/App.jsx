@@ -16,6 +16,8 @@ import ProductForm from "./pages/products/ProductForm";
 
 import PosScreen from "./pages/pos/PosScreen";
 
+import TaskManage from "./pages/task/TaskManage";
+
 function App() {
     return (
         <BrowserRouter>
@@ -55,6 +57,8 @@ function App() {
                         />
 
                         <Route path="pos" element={<PosScreen />} />
+
+                        <Route path="taskManage" element={<TaskManage />} />
                     </Route>
                 </Route>
 

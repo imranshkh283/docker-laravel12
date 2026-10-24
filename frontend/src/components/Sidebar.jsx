@@ -35,6 +35,11 @@ function Sidebar() {
                     <span>POS</span>
                 </NavLink>
 
+                <NavLink to="/dashboard/taskManage" className={linkClass}>
+                    <span>🧾</span>
+                    <span>Task</span>
+                </NavLink>
+
                 <NavLink to="/dashboard/users" className={linkClass}>
                     <span>👥</span> Users
                 </NavLink>
