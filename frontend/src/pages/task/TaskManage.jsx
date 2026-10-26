@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import "./TaskManage.css";
-
+import { labelColors } from "../../constants/labelColors";
 import api from "../../api";
 
 const TaskManage = () => {
     const [tasks, setTasks] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
+    const [id, setId] = useState(null);
+
     const [filterStatus, setFilterStatus] = useState("all");
     const [newStatus, setNewStatus] = useState("active");
     const [newLabel, setNewLabel] = useState("default");
@@ -24,8 +26,10 @@ const TaskManage = () => {
     const fetchTasks = async () => {
         try {
             const response = await api.get("/tasks");
+            console.log(response);
 
             const data = response.data;
+
             setTasks(Array.isArray(data.data) ? data.data : []);
             setMessage(data.message || "");
         } catch (error) {
@@ -92,7 +96,7 @@ const TaskManage = () => {
         }
     };
 
-    const updateTask = async (id) => {
+    const fetchTaskById = async (id) => {
         if (!window.confirm("Update this task?")) return;
 
         try {
@@ -100,12 +104,13 @@ const TaskManage = () => {
 
             if (data.data.success) {
                 setIsEditing(true);
-
+                const { title, status, label, priority, id } = data.data.data;
+                setId(id);
                 setForm({
-                    title: data.data.data.title,
-                    status: data.data.data.status,
-                    label: data.data.data.label,
-                    priority: data.data.data.priority,
+                    title: title,
+                    status: status,
+                    label: label,
+                    priority: priority,
                 });
             }
 
@@ -126,6 +131,43 @@ const TaskManage = () => {
             setMessage(data.message || "Task updated successfully");
         } catch (error) {
             setMessage(error.message || "Unable to update task");
+        }
+    };
+
+    const updateTask = async (e) => {
+        e.preventDefault();
+
+        if (!id) {
+            setMessage("Please select a task to update.");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const update = await api.patch(`/tasks/${id}`, form);
+
+            if (update.data.success) {
+                setMessage(update.data.message || "Task updated successfully");
+
+                setIsEditing(false);
+                setId(null);
+
+                setForm({
+                    title: "",
+                    status: "active",
+                    label: "yellow",
+                    priority: "low",
+                });
+
+                await fetchTasks();
+            }
+        } catch (error) {
+            setMessage(
+                error.response?.data?.message || "Unable to update task",
+            );
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -198,7 +240,9 @@ const TaskManage = () => {
                                         <button
                                             type="button"
                                             className="edit-btn"
-                                            onClick={() => updateTask(task.id)}
+                                            onClick={() =>
+                                                fetchTaskById(task.id)
+                                            }
                                             aria-label={`Update ${task.title}`}
                                         >
                                             ✎
@@ -220,7 +264,10 @@ const TaskManage = () => {
                 </table>
             </div>
 
-            <form className="new-task-form" onSubmit={addTask}>
+            <form
+                className="new-task-form"
+                onSubmit={!isEditing ? addTask : updateTask}
+            >
                 <input
                     type="text"
                     placeholder="Task Title"
@@ -245,9 +292,9 @@ const TaskManage = () => {
                             })
                         }
                     >
+                        <option value="pending">Pending</option>
                         <option value="active">Active</option>
                         <option value="done">Done</option>
-                        <option value="pending">Pending</option>
                     </select>
                 </label>
 

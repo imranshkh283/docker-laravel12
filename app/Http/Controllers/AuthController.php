@@ -28,7 +28,7 @@ class AuthController extends Controller
             data: new UserResource($result['user']),
             message: 'User registered successfully',
             status: 201,
-            extra: $result['tokens'],
+            extra: $result['token'],
         );
     }
 
