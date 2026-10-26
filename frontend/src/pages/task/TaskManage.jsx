@@ -5,13 +5,18 @@ import api from "../../api";
 
 const TaskManage = () => {
     const [tasks, setTasks] = useState([]);
-    const [title, setTitle] = useState("");
 
-    // Separate filter values from new-task form values
     const [filterStatus, setFilterStatus] = useState("all");
     const [newStatus, setNewStatus] = useState("active");
     const [newLabel, setNewLabel] = useState("default");
     const [newPriority, setNewPriority] = useState("low");
+
+    const [form, setForm] = useState({
+        title: "",
+        status: "active",
+        label: "yellow",
+        priority: "low",
+    });
 
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
@@ -35,7 +40,7 @@ const TaskManage = () => {
     const addTask = async (e) => {
         e.preventDefault();
 
-        if (!title.trim()) {
+        if (!form.title.trim()) {
             setMessage("Please enter a task title.");
             return;
         }
@@ -44,36 +49,18 @@ const TaskManage = () => {
         setMessage("");
 
         try {
-            const response = await fetch("/api/admin/tasks/storage", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    title: title.trim(),
-                    status: newStatus,
-                    label: newLabel,
-                    priority: newPriority,
-                }),
-            });
+            const insert = await api.post("/tasks", form);
 
-            const data = await response.json().catch(() => ({}));
+            if (insert.data.success == true) {
+                setForm({
+                    title: "",
+                    status: "active",
+                    label: "yellow",
+                    priority: "low",
+                });
 
-            if (!response.ok) {
-                throw new Error(data.message || "Failed to add task");
+                await fetchTasks();
             }
-
-            // Support APIs that return either a task or { task, message }
-            const createdTask = data.task || data;
-
-            if (createdTask.id != null) {
-                setTasks((previousTasks) => [...previousTasks, createdTask]);
-            } else {
-                await fetchTasks(filterStatus);
-            }
-
-            setTitle("");
-            setMessage(data.message || "Task added successfully");
         } catch (error) {
             setMessage(error.message || "Unable to add task");
         } finally {
@@ -238,16 +225,26 @@ const TaskManage = () => {
                 <input
                     type="text"
                     placeholder="Task Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    value={form.title}
+                    onChange={(e) =>
+                        setForm({
+                            ...form,
+                            title: e.target.value,
+                        })
+                    }
                     required
                 />
 
                 <label>
                     Status:
                     <select
-                        value={newStatus}
-                        onChange={(e) => setNewStatus(e.target.value)}
+                        value={form.status}
+                        onChange={(e) =>
+                            setForm({
+                                ...form,
+                                status: e.target.value,
+                            })
+                        }
                     >
                         <option value="active">Active</option>
                         <option value="done">Done</option>
@@ -258,20 +255,30 @@ const TaskManage = () => {
                 <label>
                     Label:
                     <select
-                        value={newLabel}
-                        onChange={(e) => setNewLabel(e.target.value)}
+                        value={form.label}
+                        onChange={(e) =>
+                            setForm({
+                                ...form,
+                                label: e.target.value,
+                            })
+                        }
                     >
-                        <option value="default">Default</option>
-                        <option value="new">New</option>
-                        <option value="urgent">Urgent</option>
+                        <option value="yellow">Yellow</option>
+                        <option value="green">Green</option>
+                        <option value="red">Red</option>
                     </select>
                 </label>
 
                 <label>
                     Priority:
                     <select
-                        value={newPriority}
-                        onChange={(e) => setNewPriority(e.target.value)}
+                        value={form.priority}
+                        onChange={(e) =>
+                            setForm({
+                                ...form,
+                                priority: e.target.value,
+                            })
+                        }
                     >
                         <option value="low">Low Priority</option>
                         <option value="medium">Medium Priority</option>
