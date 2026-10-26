@@ -5,7 +5,7 @@ import api from "../../api";
 
 const TaskManage = () => {
     const [tasks, setTasks] = useState([]);
-
+    const [isEditing, setIsEditing] = useState(false);
     const [filterStatus, setFilterStatus] = useState("all");
     const [newStatus, setNewStatus] = useState("active");
     const [newLabel, setNewLabel] = useState("default");
@@ -92,23 +92,22 @@ const TaskManage = () => {
         }
     };
 
-    const updateTask = async (task) => {
+    const updateTask = async (id) => {
         if (!window.confirm("Update this task?")) return;
 
         try {
-            const response = await fetch(`/api/admin/tasks/${task.id}/update`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    status: task.status,
-                    label: task.label,
-                    priority: task.priority,
-                }),
-            });
+            const data = await api.get(`/tasks/${id}`);
 
-            const data = await response.json().catch(() => ({}));
+            if (data.data.success) {
+                setIsEditing(true);
+
+                setForm({
+                    title: data.data.data.title,
+                    status: data.data.data.status,
+                    label: data.data.data.label,
+                    priority: data.data.data.priority,
+                });
+            }
 
             if (!response.ok) {
                 throw new Error(data.message || "Failed to update task");
@@ -199,7 +198,7 @@ const TaskManage = () => {
                                         <button
                                             type="button"
                                             className="edit-btn"
-                                            onClick={() => updateTask(task)}
+                                            onClick={() => updateTask(task.id)}
                                             aria-label={`Update ${task.title}`}
                                         >
                                             ✎
@@ -286,8 +285,14 @@ const TaskManage = () => {
                     </select>
                 </label>
 
-                <button type="submit" disabled={loading}>
-                    {loading ? "Adding..." : "Add Task"}
+                <button type="submit" id="submit" disabled={loading}>
+                    {loading
+                        ? isEditing
+                            ? "Updating..."
+                            : "Adding..."
+                        : isEditing
+                          ? "Update Task"
+                          : "Add Task"}
                 </button>
             </form>
         </div>

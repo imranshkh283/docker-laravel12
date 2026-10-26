@@ -42,9 +42,35 @@ class TaskController extends Controller
         ], 201);
     }
 
-    public function show() {}
+    public function show(Task $task)
+    {
 
-    public function update() {}
+        if ($task->user_id !== request()->user()->id) {
+            abort(403, 'Unauthorized access');
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Task fetched successfully',
+            'data' => $task,
+        ], 200);
+    }
+
+    public function update(TaskRequest $request, Task $task)
+    {
+
+        if ($task->user_id !== $request->user()->id) {
+            abort(403, 'Unauthorized access');
+        }
+
+        $task->update($request->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Task updated successfully',
+            'data' => $task->fresh(),
+        ]);
+    }
 
     public function delete() {}
 }
