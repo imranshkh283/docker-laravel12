@@ -2,7 +2,7 @@ import { labelColors, defaultLabelColor } from "../constants/labelColors";
 
 export default function TaskLabel({ label }) {
     const colors = labelColors[label] ?? defaultLabelColor;
-
+    const formattedLabel = label.charAt(0).toUpperCase() + label.slice(1);
     return (
         <span
             style={{
@@ -13,7 +13,7 @@ export default function TaskLabel({ label }) {
                 fontWeight: 600,
             }}
         >
-            {label}
+            {formattedLabel}
         </span>
     );
 }

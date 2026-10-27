@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./TaskManage.css";
-import { labelColors } from "../../constants/labelColors";
 import api from "../../api";
+import TaskLabel from "../../components/TaskLabel";
 
 const TaskManage = () => {
     const [tasks, setTasks] = useState([]);
@@ -15,9 +15,9 @@ const TaskManage = () => {
 
     const [form, setForm] = useState({
         title: "",
-        status: "active",
-        label: "yellow",
-        priority: "low",
+        status: "",
+        label: "",
+        priority: "",
     });
 
     const [loading, setLoading] = useState(false);
@@ -227,7 +227,9 @@ const TaskManage = () => {
                                         {task.status.charAt(0).toUpperCase() +
                                             task.status.slice(1)}
                                     </td>
-                                    <td>{task.label}</td>
+                                    <td>
+                                        <TaskLabel label={task.label} />
+                                    </td>
                                     <td>{task.priority}</td>
                                     <td>
                                         {task.created_at
