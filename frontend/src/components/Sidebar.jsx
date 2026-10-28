@@ -35,9 +35,27 @@ function Sidebar() {
                     <span>POS</span>
                 </NavLink>
 
-                <NavLink to="/dashboard/taskManage" className={linkClass}>
+                <NavLink to="/dashboard/Employee" className={linkClass}>
                     <span>🧾</span>
                     <span>Task</span>
+                </NavLink>
+
+                <NavLink to="/dashboard/LeaveRequestForm" className={linkClass}>
+                    <span>🧾</span>
+                    <span>Leave</span>
+                </NavLink>
+
+                <NavLink
+                    to="/dashboard/LeaveRequestTable"
+                    className={linkClass}
+                >
+                    <span>🧾</span>
+                    <span>Leave List</span>
+                </NavLink>
+
+                <NavLink to="/dashboard/manager" className={linkClass}>
+                    <span>🧾</span>
+                    <span>Manager</span>
                 </NavLink>
 
                 <NavLink to="/dashboard/users" className={linkClass}>

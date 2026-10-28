@@ -53,4 +53,26 @@ class User extends Authenticatable
     {
         return $this->hasMany(Task::class);
     }
+
+    // ---- Relationships ----
+
+    public function leaveRequests()          // 👈 plural
+    {
+        return $this->hasMany(LeaveRequest::class);
+    }
+
+    public function manager()               // 👈 the manager
+    {
+        return $this->belongsTo(User::class, 'manager_id');
+    }
+
+    public function teamMembers()           // 👈 manager's subordinates
+    {
+        return $this->hasMany(User::class, 'manager_id');
+    }
+
+    public function leaveBalances()
+    {
+        return $this->hasMany(LeaveBalance::class);
+    }
 }

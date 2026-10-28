@@ -17,6 +17,8 @@ import ProductForm from "./pages/products/ProductForm";
 import PosScreen from "./pages/pos/PosScreen";
 
 import TaskManage from "./pages/task/TaskManage";
+import LeaveRequestForm from "./pages/leave/LeaveRequestForm";
+import LeaveRequestTable from "./pages/leave/LeaveRequestTable";
 
 function App() {
     return (
@@ -59,6 +61,16 @@ function App() {
                         <Route path="pos" element={<PosScreen />} />
 
                         <Route path="taskManage" element={<TaskManage />} />
+
+                        <Route
+                            path="LeaveRequestForm"
+                            element={<LeaveRequestForm />}
+                        />
+
+                        <Route
+                            path="LeaveRequestTable"
+                            element={<LeaveRequestTable />}
+                        />
                     </Route>
                 </Route>
 

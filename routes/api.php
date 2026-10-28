@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +43,11 @@ Route::prefix('v1')->group(function () {
         Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 
         Route::apiResource('tasks', TaskController::class);
+
+        Route::get('/leave-type', [LeaveTypeController::class, 'index']);
+        Route::get('/leave-request', [LeaveRequestController::class, 'index']);
+        Route::post('/leave-request', [LeaveRequestController::class, 'store']);
+
         // });
     });
 });
