@@ -39,7 +39,7 @@ export default function LeaveRequestForm({ onSuccess }) {
         setLoading(true);
 
         try {
-            await api.post("/leave-request", { ...form, user_id: 1 });
+            await api.post("/leave-request", { ...form });
             setForm({
                 leave_type_id: "",
                 start_date: "",
@@ -123,31 +123,38 @@ export default function LeaveRequestForm({ onSuccess }) {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Start Date
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
+                        Start Date <span className="text-red-500">*</span>
                     </label>
-                    <input
-                        type="date"
-                        name="start_date"
-                        value={form.start_date}
-                        onChange={handleChange}
-                        required
-                        className="w-full border rounded-md px-3 py-2"
-                    />
+
+                    <div className="relative">
+                        <input
+                            type="date"
+                            name="start_date"
+                            value={form.start_date}
+                            onChange={handleChange}
+                            required
+                            className="block w-full cursor-pointer appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm outline-none transition-all hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        />
+                    </div>
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        End Date
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
+                        End Date <span className="text-red-500">*</span>
                     </label>
-                    <input
-                        type="date"
-                        name="end_date"
-                        value={form.end_date}
-                        onChange={handleChange}
-                        required
-                        className="w-full border rounded-md px-3 py-2"
-                    />
+
+                    <div className="relative">
+                        <input
+                            type="date"
+                            name="end_date"
+                            value={form.end_date}
+                            onChange={handleChange}
+                            min={form.start_date || undefined}
+                            required
+                            className="block w-full cursor-pointer appearance-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm outline-none transition-all hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        />
+                    </div>
                 </div>
             </div>
 
