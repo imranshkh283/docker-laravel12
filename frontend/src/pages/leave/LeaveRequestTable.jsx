@@ -39,8 +39,12 @@ export default function LeaveRequestTable() {
                             <td className="px-4 py-3">
                                 {r.leave_type?.name || "—"}
                             </td>
-                            <td className="px-4 py-3">{r.start_date}</td>
-                            <td className="px-4 py-3">{r.end_date}</td>
+                            <td className="px-4 py-3">
+                                {r.formatted_start_date}
+                            </td>
+                            <td className="px-4 py-3">
+                                {r.formatted_end_date}
+                            </td>
                             <td className="px-4 py-3">{r.total_days}</td>
                             <td
                                 className="px-4 py-3 max-w-xs truncate"
