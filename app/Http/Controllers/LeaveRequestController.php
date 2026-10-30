@@ -34,6 +34,8 @@ class LeaveRequestController extends Controller
     {
         $data = $request->validated();
 
+        $user_id = $request->user()->id;
+
         $start = Carbon::parse($data['start_date']);
         $end = Carbon::parse($data['end_date']);
 
@@ -48,6 +50,7 @@ class LeaveRequestController extends Controller
         try {
 
             $leaveRequest = $request->user()->leaveRequests()->create([
+                'user_id'       => $user_id,
                 'leave_type_id' => $data['leave_type_id'],
                 'start_date'    => $data['start_date'],
                 'end_date'      => $data['end_date'],
@@ -56,6 +59,7 @@ class LeaveRequestController extends Controller
                 // 'attachment_path' => $attachmentPath,
                 'status'        => 'pending',
             ]);
+
             return ApiResponse::success(
                 data: $leaveRequest,
                 message: 'Leave Raise Successfully',

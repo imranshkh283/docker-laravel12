@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { authStore } from "./lib/authStore";
 
 const api = axios.create({
     baseURL: 'http://localhost:8000/api/v1',
@@ -10,7 +11,7 @@ const api = axios.create({
 
 // Request interceptor — har request mein token add karega
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('access_token');
+    const token = authStore.getAccessToken();
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -21,10 +22,10 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
+        console.log(error);
         console.log(error.response?.status);
         if (error.response?.status === 401) {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('user');
+            authStore.clear();
             if (window.location.pathname !== '/login') {
                 window.location.href = '/login';
             }

@@ -1,8 +1,10 @@
 // src/components/LeaveRequestForm.jsx
 import { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 import api from "../../api";
 
 export default function LeaveRequestForm({ onSuccess }) {
+    const { user, userId, isAuthenticated, logout } = useAuth();
     const [leaveTypes, setLeaveTypes] = useState([]);
     const [form, setForm] = useState({
         leave_type_id: "",
@@ -39,7 +41,7 @@ export default function LeaveRequestForm({ onSuccess }) {
         setLoading(true);
 
         try {
-            await api.post("/leave-request", { ...form });
+            await api.post("/leave-request", { ...form, user_id: userId });
             setForm({
                 leave_type_id: "",
                 start_date: "",
