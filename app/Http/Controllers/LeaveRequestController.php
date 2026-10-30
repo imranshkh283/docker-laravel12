@@ -15,8 +15,10 @@ class LeaveRequestController extends Controller
 
     public function index()
     {
+        $userId = auth()->id();
 
         $query = LeaveRequestModel::with(['user', 'leaveType'])
+            ->where('user_id', $userId)
             ->latest();
 
         if ($status = request('status')) {
@@ -26,6 +28,8 @@ class LeaveRequestController extends Controller
         if ($userId = request('user_id')) {
             $query->where('user_id', $userId);
         }
+
+
 
         return $query->paginate(15);
     }

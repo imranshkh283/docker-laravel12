@@ -116,7 +116,7 @@ export default function LeaveRequestForm({ onSuccess }) {
                     </label>
                     <input
                         name="reason"
-                        value={form.response}
+                        value={form.reason}
                         onChange={handleChange}
                         required
                         placeholder="Why do you need this leave?"

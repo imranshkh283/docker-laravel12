@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
 
 function Sidebar() {
-    // Reusable class for links
     const linkClass = ({ isActive }) =>
         `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
             isActive
@@ -16,7 +15,7 @@ function Sidebar() {
                 <span className="text-lg font-bold text-gray-900">MyApp</span>
             </div>
 
-            {/* Nav links */}
+            {/* Navigation */}
             <nav className="flex flex-col gap-1 p-4">
                 <NavLink to="/dashboard" end className={linkClass}>
                     <span>🏠</span> Dashboard
@@ -31,31 +30,15 @@ function Sidebar() {
                 </NavLink>
 
                 <NavLink to="/dashboard/pos" className={linkClass}>
-                    <span>🧾</span>
-                    <span>POS</span>
+                    <span>🧾</span> POS
                 </NavLink>
 
-                <NavLink to="/dashboard/Employee" className={linkClass}>
-                    <span>🧾</span>
-                    <span>Task</span>
-                </NavLink>
-
-                <NavLink to="/dashboard/LeaveRequestForm" className={linkClass}>
-                    <span>🧾</span>
-                    <span>Leave</span>
-                </NavLink>
-
-                <NavLink
-                    to="/dashboard/LeaveRequestTable"
-                    className={linkClass}
-                >
-                    <span>🧾</span>
-                    <span>Leave List</span>
+                <NavLink to="/dashboard/leave-approve" className={linkClass}>
+                    <span>✅</span> Task
                 </NavLink>
 
                 <NavLink to="/dashboard/manager" className={linkClass}>
-                    <span>🧾</span>
-                    <span>Manager</span>
+                    <span>👨‍💼</span> Manager
                 </NavLink>
 
                 <NavLink to="/dashboard/users" className={linkClass}>
