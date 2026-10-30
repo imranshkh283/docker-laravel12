@@ -13,6 +13,10 @@ export default function LeaveRequestTable() {
             .finally(() => setLoading(false));
     };
 
+    const handleApprove = () => {};
+    const handleReject = () => {};
+    const handleCancel = () => {};
+
     useEffect(() => {
         fetchRequests();
     }, []);
@@ -56,14 +60,38 @@ export default function LeaveRequestTable() {
                             {
                                 <td className="px-4 py-3">
                                     {r.status === "pending" ? (
-                                        <div className="flex gap-2">
-                                            <button className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded">
-                                                Approve
+                                        ["1", "2", "3", "4"].includes(
+                                            String(r.user?.role),
+                                        ) ? (
+                                            <button
+                                                onClick={() =>
+                                                    handleCancel(r.id)
+                                                }
+                                                className="bg-yellow-600 hover:bg-yellow-700 text-white text-xs px-3 py-1 rounded"
+                                            >
+                                                Cancel
                                             </button>
-                                            <button className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded">
-                                                Reject
-                                            </button>
-                                        </div>
+                                        ) : (
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() =>
+                                                        handleApprove(r.id)
+                                                    }
+                                                    className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded"
+                                                >
+                                                    Approve
+                                                </button>
+
+                                                <button
+                                                    onClick={() =>
+                                                        handleReject(r.id)
+                                                    }
+                                                    className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded"
+                                                >
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        )
                                     ) : (
                                         <span className="text-gray-400 text-xs">
                                             —

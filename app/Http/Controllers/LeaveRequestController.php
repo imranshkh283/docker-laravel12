@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LeaveRequest;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Support\ApiResponse;
 use App\Models\LeaveRequest as LeaveRequestModel;
-use GrahamCampbell\ResultType\Success;
 
 class LeaveRequestController extends Controller
 {
@@ -17,9 +15,15 @@ class LeaveRequestController extends Controller
     {
         $userId = auth()->id();
 
+        $role = auth()->user()->role;
+
         $query = LeaveRequestModel::with(['user', 'leaveType'])
-            ->where('user_id', $userId)
             ->latest();
+
+        if (!in_array($role, [1, 2, 3])) {
+            $query->where('role', auth()->user()->role);
+        }
+
 
         if ($status = request('status')) {
             $query->where('status', $status);
@@ -40,6 +44,8 @@ class LeaveRequestController extends Controller
 
         $user_id = $request->user()->id;
 
+        $role = auth()->user()->role;
+
         $start = Carbon::parse($data['start_date']);
         $end = Carbon::parse($data['end_date']);
 
@@ -55,6 +61,7 @@ class LeaveRequestController extends Controller
 
             $leaveRequest = $request->user()->leaveRequests()->create([
                 'user_id'       => $user_id,
+                'role'          => $role ?? $request->user()->id,
                 'leave_type_id' => $data['leave_type_id'],
                 'start_date'    => $data['start_date'],
                 'end_date'      => $data['end_date'],
