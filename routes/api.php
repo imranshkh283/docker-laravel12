@@ -47,6 +47,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/leave-type', [LeaveTypeController::class, 'index']);
         Route::get('/leave-request', [LeaveRequestController::class, 'index']);
         Route::post('/leave-request', [LeaveRequestController::class, 'store']);
+        Route::post('/leave-requests/{id}/approve', [LeaveRequestController::class, 'approve']);
 
         // });
     });

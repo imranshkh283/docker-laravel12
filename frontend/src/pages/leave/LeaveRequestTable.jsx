@@ -13,7 +13,25 @@ export default function LeaveRequestTable() {
             .finally(() => setLoading(false));
     };
 
-    const handleApprove = () => {};
+    const handleApprove = async (id) => {
+        setLoading(true);
+
+        try {
+            const res = await api.post(`/leave-requests/${id}/approve`);
+
+            const updatedRequest = res.data.data;
+
+            setData((prevData) =>
+                prevData.map((item) =>
+                    item.id === id ? updatedRequest : item,
+                ),
+            );
+        } catch (err) {
+            console.error("Approval failed:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
     const handleReject = () => {};
     const handleCancel = () => {};
 

@@ -6,6 +6,7 @@ use App\Http\Requests\LeaveRequest;
 use Carbon\Carbon;
 use App\Support\ApiResponse;
 use App\Models\LeaveRequest as LeaveRequestModel;
+use Illuminate\Http\Request;
 
 class LeaveRequestController extends Controller
 {
@@ -13,17 +14,15 @@ class LeaveRequestController extends Controller
 
     public function index()
     {
-        $userId = auth()->id();
-
-        $role = auth()->user()->role;
+        $user = auth()->user();
 
         $query = LeaveRequestModel::with(['user', 'leaveType'])
             ->latest();
 
-        if (!in_array($role, [1, 2, 3])) {
-            $query->where('role', auth()->user()->role);
-        }
+        if (!in_array($user->role, [1, 2, 3])) {
 
+            $query->where('user_id', $user->id);
+        }
 
         if ($status = request('status')) {
             $query->where('status', $status);
@@ -32,8 +31,6 @@ class LeaveRequestController extends Controller
         if ($userId = request('user_id')) {
             $query->where('user_id', $userId);
         }
-
-
 
         return $query->paginate(15);
     }
@@ -96,5 +93,51 @@ class LeaveRequestController extends Controller
             $cursor->addDay();
         }
         return $days;
+    }
+
+    public function approve(Request $request, int $id)
+    {
+
+        $manager = $request->user();
+
+        if (!in_array($manager->role, [1, 6])) {
+
+            return response()->json([
+                'message' => 'Only managers can approve leave requests.',
+            ], 403);
+        }
+
+        $leave = LeaveRequestModel::with(['user'])->find($id);
+
+        if (!$leave) {
+            return response()->json([
+                'message' => 'Leave request not found'
+            ], 404);
+        }
+
+        if ($leave->status !== 'pending') {
+            return response()->json([
+                'message' => 'Only pending requests can be approved. Current status: ' . $leave->status,
+            ], 422);
+        }
+
+        try {
+            $leave->update([
+                'status'           => 'approved',
+                'approved_by'      => $manager->id,
+                'approved_at'      => now(),
+                'manager_comment'  => $request->input('manager_comment'),
+            ]);
+
+            return response()->json([
+                'message' => 'Leave request approved successfully.',
+                'data'    => $leave->fresh(['user', 'leaveType', 'approver']),
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Failed to approve leave request.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
     }
 }
