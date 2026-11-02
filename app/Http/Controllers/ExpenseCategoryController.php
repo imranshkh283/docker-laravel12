@@ -13,7 +13,11 @@ class ExpenseCategoryController extends Controller
      */
     public function index()
     {
-        //
+        $user = auth()->user();
+
+        $query = ExpenseCategory::with(['user'])->where('user_id', $user->id)->latest();
+
+        return $query->paginate(15);
     }
 
     /**

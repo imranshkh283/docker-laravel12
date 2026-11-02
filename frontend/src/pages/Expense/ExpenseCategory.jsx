@@ -15,6 +15,8 @@ import {
     Layers,
 } from "lucide-react";
 
+import api from "../../api";
+
 const initialCategories = [
     { id: 1, name: "Break Fast", type: "Expense" },
     { id: 2, name: "Salary", type: "Income" },
@@ -32,6 +34,11 @@ const ExpenseCategory = () => {
     const [filter, setFilter] = useState("All");
     const [editId, setEditId] = useState(null);
 
+    const [form, setForm] = useState({
+        name: "",
+        type: "",
+    });
+
     const filteredCategories = useMemo(() => {
         return categories.filter((item) => {
             const matchesSearch = item.name
@@ -44,6 +51,10 @@ const ExpenseCategory = () => {
         });
     }, [categories, search, filter]);
 
+    const handleChange = (e) => {
+        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
     const expenseCount = categories.filter(
         (item) => item.type === "Expense",
     ).length;
@@ -52,40 +63,28 @@ const ExpenseCategory = () => {
         (item) => item.type === "Income",
     ).length;
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!name.trim()) return;
+        if (!form.name.trim()) return;
 
-        if (editId) {
-            setCategories((prev) =>
-                prev.map((item) =>
-                    item.id === editId
-                        ? { ...item, name: name.trim(), type }
-                        : item,
-                ),
-            );
-            setEditId(null);
-        } else {
-            const duplicate = categories.some(
-                (item) =>
-                    item.name.toLowerCase() === name.trim().toLowerCase() &&
-                    item.type === type,
-            );
+        try {
+            const response = api.post("/expense-category/store", {
+                expense_cat_name: form.name,
+                expense_type: form.type,
+            });
 
-            if (duplicate) {
-                alert("This category already exists!");
-                return;
+            setForm({
+                name: "",
+                type: "Expense",
+            });
+
+            if (response.data.success) {
+                console.log(response.data);
             }
-
-            setCategories((prev) => [
-                {
-                    id: Date.now(),
-                    name: name.trim(),
-                    type,
-                },
-                ...prev,
-            ]);
+        } catch (error) {
+            const errors = error.response?.data?.errors;
+            console.log(error);
         }
 
         setName("");
@@ -202,8 +201,9 @@ const ExpenseCategory = () => {
                                 </label>
                                 <input
                                     type="text"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    name="name"
+                                    value={form.name}
+                                    onChange={handleChange}
                                     placeholder="e.g. Break Fast"
                                     required
                                     className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
@@ -215,12 +215,14 @@ const ExpenseCategory = () => {
                                     Category Type
                                 </label>
                                 <select
-                                    value={type}
-                                    onChange={(e) => setType(e.target.value)}
+                                    name="type"
+                                    value={form.type}
+                                    onChange={handleChange}
                                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                                 >
-                                    <option value="Expense">Expense</option>
-                                    <option value="Income">Income</option>
+                                    <option value="">Select</option>
+                                    <option value="expense">Expense</option>
+                                    <option value="income">Income</option>
                                 </select>
                             </div>
 
