@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
     Plus,
     Search,
@@ -28,6 +28,8 @@ const initialCategories = [
 
 const ExpenseCategory = () => {
     const [categories, setCategories] = useState(initialCategories);
+    const [loading, setLoading] = useState(false);
+
     const [name, setName] = useState("");
     const [type, setType] = useState("Expense");
     const [search, setSearch] = useState("");
@@ -38,6 +40,20 @@ const ExpenseCategory = () => {
         name: "",
         type: "",
     });
+
+    const fetchCategories = async () => {
+        try {
+            setLoading(true);
+
+            const response = await api.get("/expense-category");
+
+            setCategories(response.data.data);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const filteredCategories = useMemo(() => {
         return categories.filter((item) => {
@@ -51,16 +67,20 @@ const ExpenseCategory = () => {
         });
     }, [categories, search, filter]);
 
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
     const handleChange = (e) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     const expenseCount = categories.filter(
-        (item) => item.type === "Expense",
+        (item) => item.type === "expense",
     ).length;
 
     const incomeCount = categories.filter(
-        (item) => item.type === "Income",
+        (item) => item.type === "income",
     ).length;
 
     const handleSubmit = async (e) => {
@@ -273,9 +293,9 @@ const ExpenseCategory = () => {
                                 onChange={(e) => setFilter(e.target.value)}
                                 className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-indigo-500"
                             >
-                                <option value="All">All Categories</option>
-                                <option value="Expense">Expense</option>
-                                <option value="Income">Income</option>
+                                <option value="all">All Categories</option>
+                                <option value="expense">Expense</option>
+                                <option value="income">Income</option>
                             </select>
                         </div>
                     </div>
@@ -320,10 +340,10 @@ const ExpenseCategory = () => {
                                             <td className="whitespace-nowrap px-6 py-4">
                                                 <span
                                                     className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
-                                                        item.type === "Income"
+                                                        item.type === "income"
                                                             ? "bg-green-50 text-green-700"
                                                             : "bg-orange-50 text-orange-700"
-                                                    }`}
+                                                    } capitalize`}
                                                 >
                                                     {item.type}
                                                 </span>
