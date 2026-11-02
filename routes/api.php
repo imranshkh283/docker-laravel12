@@ -6,6 +6,7 @@ use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\ExpenseCategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -49,6 +50,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/leave-request', [LeaveRequestController::class, 'store']);
         Route::post('/leave-requests/{id}/approve', [LeaveRequestController::class, 'approve']);
 
+        Route::get('/expense-category', [ExpenseCategoryController::class, 'index']);
+        Route::post('/expense-category/store', [ExpenseCategoryController::class, 'store']);
         // });
     });
 });
