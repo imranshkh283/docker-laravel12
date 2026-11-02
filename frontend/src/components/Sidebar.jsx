@@ -37,6 +37,10 @@ function Sidebar() {
                     <span>✅</span> Task
                 </NavLink>
 
+                <NavLink to="/dashboard/expense-tracker" className={linkClass}>
+                    <span>₹</span>Expense Tracker
+                </NavLink>
+
                 <NavLink to="/dashboard/manager" className={linkClass}>
                     <span>👨‍💼</span> Manager
                 </NavLink>

@@ -19,6 +19,7 @@ import PosScreen from "./pages/pos/PosScreen";
 import TaskManage from "./pages/task/TaskManage";
 
 import LeaveManagement from "./pages/leave/LeaveManagement";
+import ExpenseCategory from "./pages/Expense/ExpenseCategory";
 
 function App() {
     return (
@@ -65,6 +66,11 @@ function App() {
                         <Route
                             path="leave-approve"
                             element={<LeaveManagement />}
+                        />
+
+                        <Route
+                            path="expense-tracker"
+                            element={<ExpenseCategory />}
                         />
                     </Route>
                 </Route>
