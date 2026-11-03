@@ -20,6 +20,7 @@ import TaskManage from "./pages/task/TaskManage";
 
 import LeaveManagement from "./pages/leave/LeaveManagement";
 import ExpenseCategory from "./pages/Expense/ExpenseCategory";
+import Expense from "./pages/Expense/Expense";
 
 function App() {
     return (
@@ -69,8 +70,13 @@ function App() {
                         />
 
                         <Route
-                            path="expense-tracker"
+                            path="expense-tracker/category"
                             element={<ExpenseCategory />}
+                        />
+
+                        <Route
+                            path="expense-tracker/expense"
+                            element={<Expense />}
                         />
                     </Route>
                 </Route>

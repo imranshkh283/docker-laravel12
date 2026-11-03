@@ -7,6 +7,7 @@ use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\ExpensesController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -55,5 +56,10 @@ Route::prefix('v1')->group(function () {
         Route::put('/expense-category/update/{id}', [ExpenseCategoryController::class, 'update']);
         Route::delete('/expense-category/delete/{id}', [ExpenseCategoryController::class, 'destroy']);
         // });
+
+        Route::get('/expense', [ExpensesController::class, 'index']);
+        Route::post('/expense/store', [ExpensesController::class, 'store']);
+        Route::put('/expense/{id}', [ExpensesController::class, 'update']);
+        Route::delete('/expense/{id}', [ExpensesController::class, 'destroy']);
     });
 });

@@ -1,6 +1,15 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { ChevronDown, Layers, Receipt } from "lucide-react";
+import { useState } from "react";
 
 function Sidebar() {
+    const [expenseOpen, setExpenseOpen] = useState(false);
+    const location = useLocation();
+
+    const isExpenseActive = location.pathname.startsWith(
+        "/dashboard/expense-tracker",
+    );
+
     const linkClass = ({ isActive }) =>
         `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
             isActive
@@ -37,9 +46,64 @@ function Sidebar() {
                     <span>✅</span> Task
                 </NavLink>
 
-                <NavLink to="/dashboard/expense-tracker" className={linkClass}>
-                    <span>₹</span>Expense Tracker
-                </NavLink>
+                {/* Expense Tracker Dropdown */}
+                <div>
+                    <button
+                        type="button"
+                        onClick={() => setExpenseOpen(!expenseOpen)}
+                        className={`flex w-full items-center justify-between rounded-lg px-4 py-3 text-sm font-medium transition ${
+                            isExpenseActive
+                                ? "bg-blue-50 text-blue-600"
+                                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        }`}
+                    >
+                        <span className="flex items-center gap-3">
+                            <span>₹</span>
+                            Expense Tracker
+                        </span>
+
+                        <ChevronDown
+                            size={17}
+                            className={`transition-transform duration-200 ${
+                                expenseOpen || isExpenseActive
+                                    ? "rotate-180"
+                                    : ""
+                            }`}
+                        />
+                    </button>
+
+                    {(expenseOpen || isExpenseActive) && (
+                        <div className="ml-5 mt-1 flex flex-col gap-1 border-l-2 border-gray-200 pl-4">
+                            <NavLink
+                                to="/dashboard/expense-tracker/category"
+                                className={({ isActive }) =>
+                                    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
+                                        isActive
+                                            ? "bg-blue-50 font-semibold text-blue-600"
+                                            : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                                    }`
+                                }
+                            >
+                                <Layers size={16} />
+                                Category
+                            </NavLink>
+
+                            <NavLink
+                                to="/dashboard/expense-tracker/expense"
+                                className={({ isActive }) =>
+                                    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
+                                        isActive
+                                            ? "bg-blue-50 font-semibold text-blue-600"
+                                            : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                                    }`
+                                }
+                            >
+                                <Receipt size={16} />
+                                Expense
+                            </NavLink>
+                        </div>
+                    )}
+                </div>
 
                 <NavLink to="/dashboard/manager" className={linkClass}>
                     <span>👨‍💼</span> Manager
