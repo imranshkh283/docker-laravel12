@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ExpenseCategoryRequest;
 use App\Support\ApiResponse;
 use App\Models\ExpenseCategory;
+use Illuminate\Http\Request;
 
 class ExpenseCategoryController extends Controller
 {
@@ -63,7 +64,27 @@ class ExpenseCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'expense_cat_name' => 'required|string|max:255',
+            'expense_type' => 'required|in:expense,income',
+        ]);
+
+        $user_id = $request->user()->id;
+
+        $category = ExpenseCategory::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        $category->update([
+            'name' => $request->expense_cat_name,
+            'type' => $request->expense_type,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Category updated successfully!',
+            'data' => $category,
+        ]);
     }
 
     /**
@@ -71,6 +92,18 @@ class ExpenseCategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+
+        $user = auth()->user();
+
+        $category = ExpenseCategory::where('id', $id)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        $category->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Category deleted successfully!',
+        ]);
     }
 }

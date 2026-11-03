@@ -30,8 +30,6 @@ const ExpenseCategory = () => {
     const [categories, setCategories] = useState(initialCategories);
     const [loading, setLoading] = useState(false);
 
-    const [name, setName] = useState("");
-    const [type, setType] = useState("Expense");
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("All");
     const [editId, setEditId] = useState(null);
@@ -86,52 +84,74 @@ const ExpenseCategory = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!form.name.trim()) return;
-
+        if (!form.name.trim() || !form.type) return;
         try {
-            const response = api.post("/expense-category/store", {
-                expense_cat_name: form.name,
-                expense_type: form.type,
-            });
+            let response = "";
+
+            if (editId) {
+                response = api.put(`/expense-category/update/${editId}`, {
+                    expense_cat_name: form.name,
+                    expense_type: form.type,
+                });
+            } else {
+                response = api.post("/expense-category/store", {
+                    expense_cat_name: form.name,
+                    expense_type: form.type,
+                });
+            }
 
             setForm({
                 name: "",
                 type: "Expense",
             });
 
+            fetchCategories();
+
             if (response.data.success) {
                 console.log(response.data);
             }
         } catch (error) {
             const errors = error.response?.data?.errors;
-            console.log(error);
+            console.log(errors);
         }
-
-        setName("");
-        setType("Expense");
     };
 
     const handleEdit = (item) => {
         setEditId(item.id);
-        setName(item.name);
-        setType(item.type);
+
+        setForm({
+            name: item.name,
+            type: item.type,
+        });
+
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    const handleDelete = (id) => {
-        if (window.confirm("Are you sure you want to delete this category?")) {
-            setCategories((prev) => prev.filter((item) => item.id !== id));
+    const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this category?")) {
+            return;
+        }
 
-            if (editId === id) {
-                resetForm();
+        try {
+            const response = await api.delete(`/expense-category/delete/${id}`);
+
+            if (response.data.success) {
+                console.log(response.data.message);
+
+                // Refresh category list
+                fetchCategories();
             }
+        } catch (error) {
+            console.log(error.response?.data || error.message);
         }
     };
 
     const resetForm = () => {
         setEditId(null);
-        setName("");
-        setType("Expense");
+        setForm({
+            name: "",
+            type: "",
+        });
     };
 
     const getIcon = (category) => {

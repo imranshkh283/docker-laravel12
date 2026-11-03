@@ -52,6 +52,8 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/expense-category', [ExpenseCategoryController::class, 'index']);
         Route::post('/expense-category/store', [ExpenseCategoryController::class, 'store']);
+        Route::put('/expense-category/update/{id}', [ExpenseCategoryController::class, 'update']);
+        Route::delete('/expense-category/delete/{id}', [ExpenseCategoryController::class, 'destroy']);
         // });
     });
 });
