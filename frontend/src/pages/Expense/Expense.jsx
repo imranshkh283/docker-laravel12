@@ -47,7 +47,11 @@ const initialExpenses = [
 
 const Expense = () => {
     const [categories, setCategories] = useState([]);
-    const [expenses, setExpenses] = useState(initialExpenses);
+
+    const [expenses, setExpenses] = useState([]);
+    const [today, setToday] = useState("");
+    const [currentMonth, setCurrentMonth] = useState("");
+
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("all");
     const [dateFilter, setDateFilter] = useState("all");
@@ -77,11 +81,14 @@ const Expense = () => {
     );
 
     const todayExpense = expenses
-        .filter((item) => item.date === "2026-11-03")
+        .filter((item) => item.date === today && item.type === "expense")
         .reduce((total, item) => total + Number(item.amount), 0);
 
     const monthlyExpense = expenses
-        .filter((item) => item.date.startsWith("2026-11"))
+        .filter(
+            (item) =>
+                item.date.startsWith(currentMonth) && item.type === "expense",
+        )
         .reduce((total, item) => total + Number(item.amount), 0);
 
     const averageExpense =
@@ -89,20 +96,22 @@ const Expense = () => {
 
     const filteredExpenses = useMemo(() => {
         return expenses.filter((item) => {
+            const searchTerm = search.toLowerCase();
+
             const matchesSearch =
-                item.title.toLowerCase().includes(search.toLowerCase()) ||
-                item.category.toLowerCase().includes(search.toLowerCase());
+                item.title?.toLowerCase().includes(searchTerm) ||
+                item.category?.toLowerCase().includes(searchTerm);
 
             const matchesFilter = filter === "all" || item.category === filter;
 
             const matchesDate =
                 dateFilter === "all" ||
-                (dateFilter === "today" && item.date === "2026-11-03") ||
-                (dateFilter === "month" && item.date.startsWith("2026-11"));
+                (dateFilter === "today" && item.date === today) ||
+                (dateFilter === "month" && item.date?.startsWith(currentMonth));
 
             return matchesSearch && matchesFilter && matchesDate;
         });
-    }, [expenses, search, filter, dateFilter]);
+    }, [expenses, search, filter, dateFilter, today, currentMonth]);
 
     const handleChange = (e) => {
         setForm({
@@ -113,8 +122,20 @@ const Expense = () => {
 
     const fetchExpenseCategory = async () => {
         const response = await api.get(`/expense-category`);
-        console.log(response);
+
         setCategories(response.data.data);
+    };
+
+    const fetchExpenses = async () => {
+        try {
+            const response = await api.get(`/expense`);
+
+            if (response.data.success === true) {
+                setExpenses(response.data.data.expenses);
+                setToday(response.data.data.today);
+                setCurrentMonth(response.data.data.current_month);
+            }
+        } catch (error) {}
     };
 
     const handleSubmit = async (e) => {
@@ -138,9 +159,6 @@ const Expense = () => {
             } else {
                 response = await api.post("/expense/store", payload);
             }
-
-            console.log("Status:", response.status);
-            console.log("Response:", response.data);
 
             if (response.data.success) {
                 resetForm();
@@ -208,6 +226,7 @@ const Expense = () => {
 
     useEffect(() => {
         fetchExpenseCategory();
+        fetchExpenses();
     }, []);
 
     return (
@@ -472,23 +491,36 @@ const Expense = () => {
                                             </td>
 
                                             <td className="whitespace-nowrap px-6 py-4">
-                                                <span className="rounded-full bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-700">
+                                                <span
+                                                    className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
+                                                        item.type === "expense"
+                                                            ? "bg-red-50 text-red-700"
+                                                            : "bg-green-50 text-green-700"
+                                                    }`}
+                                                >
                                                     {item.category}
                                                 </span>
                                             </td>
 
                                             <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                                                {new Date(
-                                                    item.date + "T00:00:00",
-                                                ).toLocaleDateString("en-IN")}
+                                                {item.date}
                                             </td>
 
                                             <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
                                                 {item.payment}
                                             </td>
 
-                                            <td className="whitespace-nowrap px-6 py-4 text-sm font-bold text-red-600">
-                                                - {currency(item.amount)}
+                                            <td
+                                                className={`whitespace-nowrap px-6 py-4 text-sm font-bold ${
+                                                    item.type === "expense"
+                                                        ? "text-red-600"
+                                                        : "text-green-600"
+                                                }`}
+                                            >
+                                                {item.type === "expense"
+                                                    ? "-"
+                                                    : "+"}
+                                                {currency(item.amount)}
                                             </td>
 
                                             <td className="whitespace-nowrap px-6 py-4">

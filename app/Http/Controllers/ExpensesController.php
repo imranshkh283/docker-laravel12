@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\ExpensesRequest;
 use App\Support\ApiResponse;
 use App\Models\Expense;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -15,9 +16,61 @@ class ExpensesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            $expenses = [];
+            $user_id = auth()->id();
+
+            $today = Carbon::now('Asia/Kolkata')->toDateString();
+
+            $currentMonth = Carbon::now('Asia/Kolkata')->format('Y-m');
+
+            $expense = DB::select("SELECT
+                    ec.name as expense_category_name,
+                    e.*
+                FROM
+                    expenses e
+                LEFT JOIN expense_categories ec
+                ON ec.id = e.expense_category_id WHERE e.user_id = ? ORDER BY created_at DESC", [$user_id]);
+
+            foreach ($expense as $key => $value) {
+                $expenses[] = [
+                    'id' => $value->id,
+                    'title' => $value->expense_title,
+                    'type' => $value->type,
+                    'category' => $value->expense_category_name,
+                    'amount' => $value->amount,
+                    'payment' => $value->payment_method,
+                    'date' => Carbon::parse($value->transaction_date)->format('j M Y'),
+                    'note' => $value->description,
+                ];
+            }
+
+
+            return ApiResponse::success(
+                message: 'Expenses fetched successfully',
+                data: [
+                    'expenses' => $expenses,
+                    'today' => $today,
+                    'current_month' => $currentMonth,
+                ],
+                status: 200
+            );
+        } catch (\Throwable $th) {
+
+            Log::error('Expense Fetch Failed', [
+                'user_id' => $request->user()?->id,
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine(),
+            ]);
+
+            return ApiResponse::error(
+                message: 'Something went wrong while fetching expenses',
+                status: 500
+            );
+        }
     }
 
     /**
