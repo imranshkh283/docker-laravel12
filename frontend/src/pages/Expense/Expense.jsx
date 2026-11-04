@@ -31,51 +31,6 @@ const initialExpenses = [
         payment: "Cash",
         note: "Morning breakfast",
     },
-    {
-        id: 2,
-        title: "Office Cab",
-        category: "Travel",
-        amount: 450,
-        date: "2026-11-02",
-        payment: "UPI",
-        note: "Office transportation",
-    },
-    {
-        id: 3,
-        title: "Shopping",
-        category: "Shopping",
-        amount: 2500,
-        date: "2026-11-01",
-        payment: "Credit Card",
-        note: "Clothes shopping",
-    },
-    {
-        id: 4,
-        title: "House Rent",
-        category: "Rent",
-        amount: 12000,
-        date: "2026-11-01",
-        payment: "Bank Transfer",
-        note: "Monthly house rent",
-    },
-    {
-        id: 5,
-        title: "Electricity Bill",
-        category: "Bills",
-        amount: 1800,
-        date: "2026-10-28",
-        payment: "UPI",
-        note: "Electricity payment",
-    },
-    {
-        id: 6,
-        title: "Movie",
-        category: "Entertainment",
-        amount: 600,
-        date: "2026-10-25",
-        payment: "UPI",
-        note: "Weekend movie",
-    },
 ];
 
 // const categories = [
@@ -107,7 +62,6 @@ const Expense = () => {
         description: "",
         transaction_date: "2026-11-04",
         payment_method: "",
-        notes: "",
     });
 
     const currency = (amount) =>
@@ -174,9 +128,8 @@ const Expense = () => {
             description: form.description.trim(),
             transaction_date: form.transaction_date,
             payment_method: form.payment_method,
-            notes: form.notes,
         };
-
+        console.log("Request Payload:", payload);
         try {
             let response;
 
@@ -185,6 +138,9 @@ const Expense = () => {
             } else {
                 response = await api.post("/expense/store", payload);
             }
+
+            console.log("Status:", response.status);
+            console.log("Response:", response.data);
 
             if (response.data.success) {
                 resetForm();
@@ -207,7 +163,6 @@ const Expense = () => {
             description: item.description || "",
             transaction_date: item.transaction_date,
             payment_method: item.payment_method,
-            notes: item.notes || "",
         });
 
         setShowForm(true);
@@ -232,7 +187,6 @@ const Expense = () => {
             description: "",
             transaction_date: "2026-11-04",
             payment_method: "",
-            notes: "",
         });
     };
 
@@ -373,8 +327,8 @@ const Expense = () => {
 
                                 <FormSelect
                                     label="Payment Method"
-                                    name="payment"
-                                    value={form.payment}
+                                    name="payment_method"
+                                    value={form.payment_method}
                                     onChange={handleChange}
                                     options={[
                                         "Cash",
@@ -387,7 +341,7 @@ const Expense = () => {
 
                                 <FormInput
                                     label="Description"
-                                    name="note"
+                                    name="description"
                                     value={form.description}
                                     onChange={handleChange}
                                     placeholder="Optional description"

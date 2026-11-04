@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Http\Requests;
@@ -39,8 +38,6 @@ class ExpensesRequest extends FormRequest
             'amount' => [
                 'required',
                 'numeric',
-                'gt:0',
-                'decimal:0,2',
             ],
 
             'description' => [
@@ -58,12 +55,7 @@ class ExpensesRequest extends FormRequest
                 'required',
                 'string',
                 'max:30',
-            ],
-
-            'notes' => [
-                'nullable',
-                'string',
-            ],
+            ]
         ];
     }
 
